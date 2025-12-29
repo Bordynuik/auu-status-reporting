@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUU Query Tool v3.1 - Simplified Database</title>
+    
+    <style>
+        /* RedWolf Security Style Guide Implementation (<link rel='stylesheet' href='assets/css/main.css' />)*/
+        /* RedWolf Security Style Guide Implementation */
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+        :root {
+            /* RedWolf Official Colors */
+            --rw-highlight: #FCFB20;
+            --rw-primary: #e2241a;
+            --rw-primary-dark: #980000;
+            --rw-secondary-dark: #000000;
+            --rw-secondary: #FFFFFF;
+            --rw-secondary-highlight: #BAD5F7;
+            
+            /* Document Style Colors */
+            --rw-title: #434343;
+            --rw-subtitle: #666666;
+            --rw-h1: #990000;
+            --rw-h2: #cc0000;
+            --rw-h3: #ff0000;
+            --rw-text: #000000;
+            --rw-help-text: #666666;
+            
+            /* Additional UI Colors */
+            --rw-input-border: #e1e8ed;
+            --rw-input-bg: #fafbfc;
+            --rw-success: #155724;
+            --rw-success-bg: #d4edda;
+            --rw-error: #721c24;
+            --rw-error-bg: #f8d7da;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--rw-primary) 0%, var(--rw-primary-dark) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--rw-text);
+            font-size: 11pt;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--rw-secondary);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 2px solid var(--rw-primary);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--rw-secondary-dark), var(--rw-primary-dark));
+            color: var(--rw-secondary);
+            padding: 30px 40px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--rw-highlight);
+        }
+
+        .header h1 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 18pt;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: var(--rw-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13pt;
+            font-weight: 300;
+            color: var(--rw-secondary-highlight);
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 600;
+            color: var(--rw-h1);
+            font-size: 11pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid var(--rw-input-border);
+            border-radius: 4px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 11pt;
+            transition: all 0.3s ease;
+            background: var(--rw-input-bg);
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--rw-primary);
+            background: var(--rw-secondary);
+            box-shadow: 0 0 0 3px rgba(226, 36, 26, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 50px;
+            font-family: 'IBM Plex Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 10pt;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            border: 2px solid var(--rw-primary);
+            background: var(--rw-secondary);
+            color: var(--rw-primary);
+            border-radius: 4px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 9pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: var(--rw-primary);
+            color: var(--rw-secondary);
+        }
+
+        .btn-small.danger {
+            border-color: var(--rw-error);
+            color: var(--rw-error);
+        }
+
+        .btn-small.danger:hover {
+            background: var(--rw-error);
+            color: var(--rw-secondary);
+        }
+
+        /* Management panel */
+        .management-panel {
+            background: var(--rw-input-bg);
+            border: 2px solid var(--rw-input-border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .management-header {
+            background: var(--rw-primary-dark);
+            color: var(--rw-secondary);
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 10pt;
+        }
+
+        .management-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .management-content.expanded {
+            display: block;
+        }
+
+        .fqdn-list {
+            list-style: none;
+        }
+
+        .fqdn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: var(--rw-secondary);
+            border: 1px solid var(--rw-input-border);
+            border-radius: 4px;
+        }
+
+        .fqdn-item:hover {
+            background: var(--rw-secondary-highlight);
+        }
+
+        .fqdn-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10pt;
+        }
+
+        .management-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .add-fqdn-form {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--rw-secondary);
+            border: 1px solid var(--rw-input-border);
+            border-radius: 4px;
+        }
+
+        .add-fqdn-form.show {
+            display: block;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--rw-primary), var(--rw-primary-dark));
+            color: var(--rw-secondary);
+            border: none;
+            padding: 18px 40px;
+            border-radius: 4px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(252, 251, 32, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--rw-primary-dark), var(--rw-secondary-dark));
+            box-shadow: 0 5px 15px rgba(226, 36, 26, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            margin-left: 10px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--rw-highlight);
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .response-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--rw-input-bg);
+            border-radius: 4px;
+            border-left: 6px solid var(--rw-primary);
+            display: none;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--rw-input-border);
+            padding-bottom: 15px;
+        }
+
+        .response-header h3 {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13pt;
+            font-weight: 600;
+            color: var(--rw-h1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .response-status {
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-size: 10pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-success {
+            background: var(--rw-success-bg);
+            color: var(--rw-success);
+            border: 1px solid var(--rw-success);
+        }
+
+        .status-error {
+            background: var(--rw-error-bg);
+            color: var(--rw-error);
+            border: 1px solid var(--rw-error);
+        }
+
+        .response-content {
+            background: var(--rw-secondary-dark);
+            color: var(--rw-secondary-highlight);
+            padding: 7px;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 9pt;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--rw-input-border);
+        }
+        
+        /* New box for raw JSON */
+        #rawJsonContainer {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--rw-input-bg);
+            border-radius: 4px;
+            border-left: 6px solid var(--rw-secondary-dark);
+            display: none; /* Initially hidden */
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        /* Custom table styling for response */
+        .response-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--rw-secondary-dark); /* Changed text color for visibility */
+            font-family: 'IBM Plex Mono', 'Monaco', monospace;
+            font-size: 9pt;
+        }
+        .response-table th, .response-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        .response-table thead th {
+            background: var(--rw-primary); /* RedWolf red header background */
+            color: var(--rw-secondary); /* White text */
+            text-transform: uppercase;
+            font-size: 8pt;
+            letter-spacing: 1px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .response-table tbody td {
+            background-color: var(--rw-secondary); /* White body row background */
+            color: var(--rw-secondary-dark);
+        }
+        .response-table tbody tr:hover {
+            background-color: var(--rw-input-bg);
+        }
+        .response-table tfoot {
+            font-weight: 600;
+            border-top: 2px solid var(--rw-secondary-dark);
+        }
+        .response-table tfoot td {
+            background: var(--rw-secondary);
+            border-bottom: none;
+            padding-top: 15px;
+            color: var(--rw-secondary-dark);
+        }
+        /* Sticky header and totals row */
+        .response-table thead tr.sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: var(--rw-primary);
+        }
+        .response-table thead tr.sticky-totals {
+            position: sticky;
+            top: 38px; /* Adjust if header row height changes */
+            z-index: 2;
+            background: var(--rw-primary-dark);
+            color: var(--rw-secondary);
+        }
+        .copy-btn {
+            background: var(--rw-help-text);
+            color: var(--rw-secondary);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 9pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--rw-primary);
+            transform: translateY(-1px);
+        }
+        
+        /* New toggle button for JSON data */
+        .toggle-btn {
+            padding: 8px 15px; /* Match Copy button padding */
+            border: none;
+            color: var(--rw-secondary);
+            font-size: 9pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-btn.show {
+            background-color: var(--rw-success); /* Green for "Show" */
+        }
+
+        .toggle-btn.hide {
+            background-color: var(--rw-error); /* Red for "Hide" */
+        }
+
+        .error-message {
+            color: var(--rw-error);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 10pt;
+            font-weight: 500;
+            margin-top: 8px;
+            display: none;
+            padding: 10px;
+            background: var(--rw-error-bg);
+            border-radius: 4px;
+            border-left: 4px solid var(--rw-error);
+        }
+
+        .help-text {
+            color: var(--rw-help-text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 9pt;
+            font-weight: 400;
+            margin-top: 6px;
+            line-height: 1.3;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background-color: var(--rw-success);
+        }
+
+        .status-disconnected {
+            background-color: var(--rw-error);
+        }
+
+        /* RedWolf branded scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--rw-input-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--rw-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--rw-primary-dark);
+        }
+
+        /* Enhanced focus states for accessibility */
+        input:focus-visible,
+        textarea:focus-visible,
+        button:focus-visible,
+        select:focus-visible {
+            outline: 2px solid var(--rw-highlight);
+            outline-offset: 2px;
+        }
+
+        /* RedWolf branded selection */
+        ::selection {
+            background: var(--rw-highlight);
+            color: var(--rw-secondary-dark);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .form-container {
+                padding: 25px 20px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 16pt;
+            }
+            
+            .response-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .fqdn-select {
+            position: relative;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AUU Query Tool v3.1</h1>
+            <p>Simplified Database - Single Table Approach</p>
+            <div style="margin-top: 15px; font-size: 10pt;">
+                <span id="dbStatus" class="status-indicator status-disconnected"></span>
+                <span id="dbStatusText">Checking database connection...</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="management-panel">
+                <div class="management-header" onclick="toggleManagement()">
+                    <span>FQDN Management</span>
+                    <span id="managementToggle">▼</span>
+                </div>
+                <div id="managementContent" class="management-content">
+                    <div class="management-actions">
+                        <button type="button" class="btn-small" onclick="showAddFqdnForm()">Add FQDN</button>
+                        <button type="button" class="btn-small" onclick="refreshFqdns()">Refresh</button>
+                    </div>
+                    
+                    <div id="addFqdnForm" class="add-fqdn-form">
+                        <div class="form-group">
+                            <label for="newFqdn">Portal FQDN:</label>
+                            <input type="text" id="newFqdn" placeholder="portal.redwolfsecurity.com" />
+                        </div>
+                        <div class="management-actions">
+                            <button type="button" class="btn-small" onclick="addNewFqdn()">Add</button>
+                            <button type="button" class="btn-small" onclick="hideAddFqdnForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <ul id="fqdnList" class="fqdn-list">
+                    </ul>
+                </div>
+            </div>
+
+            <form id="apiForm">
+                <div class="form-group">
+                    <label for="fqdnSelect">Select FQDN: *</label>
+                    <select id="fqdnSelect" name="fqdn" required onchange="onFqdnChange()">
+                        <option value="">Loading FQDNs...</option>
+                    </select>
+                    <div class="help-text">
+                        Choose the FQDN to query from the dropdown above
+                        <button type="button" class="btn-small" onclick="loadFqdns()" style="margin-left: 10px; padding: 4px 8px; font-size: 8pt;">Refresh FQDNs</button>
+                        <button type="button" class="btn-small" onclick="testConnection()" style="margin-left: 5px; padding: 4px 8px; font-size: 8pt;">Test Connection</button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userMail">User Email: *</label>
+                        <input type="email" id="userMail" name="user_mail" required />
+                        <div class="help-text">Your API username/email</div>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <label for="userPassword">User Password: *</label>
+                        <input type="password" id="userPassword" name="user_password" required style="padding-right: 40px;" />
+                        <span id="togglePassword" 
+                            style="position: absolute; right: 12px; top: 42px; cursor: pointer; font-size: 14pt; color: var(--rw-help-text);">
+                            👁️
+                        </span>
+                        <div class="help-text">Your API password</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Start Date: *</label>
+                        <input type="date" id="startDate" name="start_date" required />
+                        <div class="help-text">Filter results from this date</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date: *</label>
+                        <input type="date" id="endDate" name="end_date" required />
+                        <div class="help-text">Filter results to this date</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="parameters">AUU Parameters: *</label>
+                    <textarea id="parameters" name="parameters" required oninput="onParametersChange()" placeholder="/api/v1/events?limit=100"></textarea>
+                    <div id="parametersError" class="error-message"></div>
+                    <div class="help-text">AUU endpoint path and query parameters (must start with /)</div>
+                </div>
+<!--
+                <div class="form-group">
+                    <label for="comments">Comments:</label>
+                    <textarea id="comments" name="comments" placeholder="Optional comments about this query..."></textarea>
+                    <div class="help-text">Optional notes or comments about this query</div>
+                </div>
+-->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mimeType">Content Type:</label>
+                        <select id="mimeType" name="mimeType">
+                            <option value="application/json">JSON (application/json)</option>
+                            <option value="application/xml">XML (application/xml)</option>
+                            <option value="text/csv">CSV (text/csv)</option>
+                            <option value="text/plain">Plain Text</option>
+                        </select>
+                        <div class="help-text">Expected response format</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeout">Timeout (seconds):</label>
+                        <input type="number" id="timeout" name="timeout" value="30" min="5" max="300" />
+                        <div class="help-text">Request timeout (5-300 seconds)</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Execute AUU Query
+                    <span id="loading" class="loading"></span>
+                </button>
+            </form>
+            
+            <div id="responseContainer" class="response-container">
+                <div class="response-header">
+                    <h3>Response Table</h3>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span id="responseStatus" class="response-status"></span>
+                        <button type="button" id="copyBtn" class="copy-btn">Copy</button>
+                    </div>
+                </div>
+                <div id="responseContent" class="response-content"></div>
+            </div>
+
+            <div id="rawJsonContainer" class="response-container">
+                <div class="response-header">
+                    <h3>JSON Data</h3>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span id="rawJsonStatus" class="response-status"></span>
+                        <button type="button" id="copyRawJsonBtn" class="copy-btn">Copy</button>
+                        <button type="button" id="toggleJsonBtn" class="toggle-btn show">Show</button>
+                    </div>
+                </div>
+                <div id="rawJsonContent" class="response-content" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AUU Configuration
+        const API_BASE = 'http://localhost:3000/api';
+        
+        // Global variables
+        let currentFqdn = null;
+        let fqdns = [];
+
+        // DOM Elements - will be initialized after DOM loads
+        let form, submitBtn, loading, responseContainer, responseContent;
+        let rawJsonContainer, rawJsonContent, rawJsonStatus, copyRawJsonBtn, toggleJsonBtn;
+        let responseStatus, copyBtn, parametersError;
+        let fqdnSelect, dbStatus, dbStatusText, fqdnList;
+        let userMail, userPassword, parametersInput, startDateInput, endDateInput, commentsInput;
+
+        // GLOBAL FUNCTIONS - accessible from HTML onclick attributes
+
+        /**
+         * Loads FQDNs from the API and populates the FQDN dropdown and management list.
+         */
+        async function loadFqdns() {
+            console.log('=== LOADING FQDNs START ===');
+            
+            if (!fqdnSelect) {
+                console.error('fqdnSelect not initialized');
+                return;
+            }
+            
+            // Update UI to show loading state
+            fqdnSelect.innerHTML = '<option value="">Loading FQDNs...</option>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/fqdns`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const responseText = await response.text();
+                    try {
+                        fqdns = JSON.parse(responseText);
+                        updateFqdnSelect();
+                        updateFqdnList();
+                        if (dbStatus) {
+                            dbStatus.className = 'status-indicator status-connected';
+                            dbStatusText.textContent = 'Database Connected';
+                        }
+                    } catch (jsonError) {
+                        console.error('JSON parsing error:', jsonError);
+                        fqdnSelect.innerHTML = '<option value="">Error: Invalid response format</option>';
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('Response not OK, status:', response.status, 'Error text:', errorText);
+                    fqdnSelect.innerHTML = '<option value="">Error: ' + response.status + ' ' + response.statusText + '</option>';
+                    if (dbStatus) {
+                        dbStatus.className = 'status-indicator status-disconnected';
+                        dbStatusText.textContent = 'Error loading FQDNs: ' + response.status;
+                    }
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                fqdnSelect.innerHTML = '<option value="">Connection error - check server and console</option>';
+                if (dbStatus) {
+                    dbStatus.className = 'status-indicator status-disconnected';
+                    dbStatusText.textContent = 'Error loading FQDNs - server not responding';
+                }
+            }
+            
+            console.log('=== LOADING FQDNs END ===');
+        }
+
+        /**
+         * Tests the connection to the API server.
+         */
+        async function testConnection() {
+            console.log('=== TESTING CONNECTION ===');
+            try {
+                const healthResponse = await fetch(`${API_BASE}/health`);
+                console.log('Health response status:', healthResponse.status);
+                const healthText = await healthResponse.text();
+                console.log('Health response text:', healthText);
+                
+                const fqdnsResponse = await fetch(`${API_BASE}/fqdns`);
+                console.log('FQDNs endpoint status:', fqdnsResponse.status);
+                const fqdnsText = await fqdnsResponse.text();
+                console.log('FQDNs endpoint raw response:', fqdnsText);
+                
+                alert('Connection test complete - check console for details.');
+            } catch (error) {
+                console.error('Connection test failed:', error);
+                alert('Connection test failed. Check the console for errors.');
+            }
+        }
+
+        /**
+         * Updates the dropdown menu with the list of FQDNs.
+         */
+        function updateFqdnSelect() {
+            if (!fqdnSelect) return;
+            fqdnSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = fqdns.length === 0 ? 'No FQDNs available' : 'Select an FQDN...';
+            fqdnSelect.appendChild(defaultOption);
+            
+            fqdns.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.fqdn;
+                option.textContent = item.fqdn;
+                fqdnSelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Updates the FQDN management list.
+         */
+        function updateFqdnList() {
+            if (!fqdnList) return;
+            fqdnList.innerHTML = '';
+            fqdns.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'fqdn-item';
+                li.innerHTML = `
+                    <span class="fqdn-name">${item.fqdn}</span>
+                    <button type="button" class="btn-small danger" onclick="deleteFqdn('${item.fqdn}')">Delete</button>
+                `;
+                fqdnList.appendChild(li);
+            });
+        }
+        
+        /**
+         * Toggles the visibility of the management panel.
+         */
+        function toggleManagement() {
+            const content = document.getElementById('managementContent');
+            const toggleIcon = document.getElementById('managementToggle');
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggleIcon.textContent = '▼';
+            } else {
+                content.classList.add('expanded');
+                toggleIcon.textContent = '▲';
+                refreshFqdns();
+            }
+        }
+        
+        /**
+         * Shows the "add new FQDN" form.
+         */
+        function showAddFqdnForm() {
+            const form = document.getElementById('addFqdnForm');
+            if (form) {
+                form.classList.add('show');
+            }
+        }
+
+        /**
+         * Hides the "add new FQDN" form.
+         */
+        function hideAddFqdnForm() {
+            const form = document.getElementById('addFqdnForm');
+            const input = document.getElementById('newFqdn');
+            if (form && input) {
+                form.classList.remove('show');
+                input.value = ''; // Clear input field
+            }
+        }
+
+        /**
+         * Adds a new FQDN to the database via API call.
+         */
+        async function addNewFqdn() {
+            const fqdnInput = document.getElementById('newFqdn');
+            const fqdn = fqdnInput.value.trim();
+            if (!fqdn) {
+                alert('FQDN cannot be empty.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/save_query_data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        fqdn: fqdn,
+                        user_mail: '',
+                        user_password: '',
+                        start_date: '',
+                        end_date: '',
+                        parameters: '',
+                        comments: ''
+                    })
+                });
+
+                if (response.ok) {
+                    await response.json();
+                    fqdnInput.value = ''; // Clear input
+                    hideAddFqdnForm();
+                    refreshFqdns();
+                } else {
+                    const error = await response.text();
+                    alert('Failed to add FQDN: ' + error);
+                }
+            } catch (error) {
+                console.error('Error adding new FQDN:', error);
+                alert('Connection error. Could not add FQDN.');
+            }
+        }
+
+        /**
+         * Deletes an FQDN from the database via API call.
+         * @param {string} fqdn - The FQDN to delete.
+         */
+        async function deleteFqdn(fqdn) {
+            if (!confirm(`Are you sure you want to delete the FQDN "${fqdn}"? This cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/query_data/${encodeURIComponent(fqdn)}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    await response.json();
+                    refreshFqdns();
+                    // Clear form if deleted FQDN was selected
+                    if (currentFqdn === fqdn) {
+                        clearForm();
+                        currentFqdn = null;
+                        fqdnSelect.value = '';
+                    }
+                } else {
+                    const error = await response.text();
+                    alert('Failed to delete FQDN: ' + error);
+                }
+            } catch (error) {
+                console.error('Error deleting FQDN:', error);
+                alert('Connection error. Could not delete FQDN.');
+            }
+        }
+
+        /**
+         * Refreshes both the dropdown and the management list of FQDNs.
+         */
+        function refreshFqdns() {
+            loadFqdns();
+        }
+
+        /**
+         * Handles the change event of the FQDN dropdown.
+         */
+        async function onFqdnChange() {
+            const fqdn = fqdnSelect.value;
+            currentFqdn = fqdn;
+            
+            if (!fqdn) {
+                clearForm();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/query_data?fqdn=${encodeURIComponent(fqdn)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Populate form fields with data from database
+                    userMail.value = data.user_mail || '';
+                    userPassword.value = data.user_password || '';
+                    startDateInput.value = data.start_date ? data.start_date.split('T')[0] : '';
+                    endDateInput.value = data.end_date ? data.end_date.split('T')[0] : '';
+                    parametersInput.value = data.parameters || '';
+                    // commentsInput.value = data.comments || '';
+                    
+                } else {
+                    console.error('Failed to load query data:', response.status);
+                    clearForm();
+                }
+            } catch (error) {
+                console.error('Error loading query data:', error);
+                clearForm();
+            }
+        }
+
+        /**
+         * Clears all form fields.
+         */
+        function clearForm() {
+            userMail.value = '';
+            userPassword.value = '';
+            startDateInput.value = '';
+            endDateInput.value = '';
+            parametersInput.value = '';
+            // commentsInput.value = '';
+        }
+
+        /**
+         * Toggles the visibility of the raw JSON content and updates the button.
+         */
+        function toggleJsonVisibility() {
+            if (rawJsonContent.style.display === 'none') {
+                rawJsonContent.style.display = 'block';
+                toggleJsonBtn.textContent = 'Hide';
+                toggleJsonBtn.classList.remove('show');
+                toggleJsonBtn.classList.add('hide');
+            } else {
+                rawJsonContent.style.display = 'none';
+                toggleJsonBtn.textContent = 'Show';
+                toggleJsonBtn.classList.remove('hide');
+                toggleJsonBtn.classList.add('show');
+            }
+        }
+
+        /**
+         * Handles the form submission event.
+         * @param {Event} event - The form submission event.
+         */
+    async function onFormSubmit(event) {
+        event.preventDefault();
+        
+        // Get form data as an object
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Correctly set the fqdn property from the selected value
+        data.fqdn = fqdnSelect.value;
+        
+        // Log the data to verify it before sending
+        console.log('Form data to be sent:', data);
+        
+        if (!data.fqdn || !data.user_mail || !data.user_password || !data.parameters) {
+            alert('Please fill out all required fields marked with an asterisk (*).');
+            submitBtn.disabled = false;
+            loading.style.display = 'none';
+            return;
+        }
+        
+        // Disable button and show loading indicator
+        submitBtn.disabled = true;
+        loading.style.display = 'inline-block';
+
+        // Add timestamps to date values
+        data.start_date = startDateInput.value ? `${startDateInput.value}T00:00:01` : '';
+        data.end_date = endDateInput.value ? `${endDateInput.value}T23:59:59` : '';
+
+        // Reset JSON box and prepare for new response
+        rawJsonContainer.style.display = 'block';
+        rawJsonContent.style.display = 'none';
+        rawJsonContent.textContent = '';
+        toggleJsonBtn.textContent = 'Show';
+        toggleJsonBtn.classList.remove('hide');
+        toggleJsonBtn.classList.add('show');
+
+        // Clear previous table outputs
+        responseContainer.style.display = 'none';
+        responseContent.innerHTML = '';
+        
+        try {
+            const response = await fetch(`${API_BASE}/execute_query`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                const responseData = await response.json();
+                responseContainer.style.display = 'block';
+                responseStatus.textContent = 'Success';
+                responseStatus.className = 'response-status status-success';
+                displayAsTable(responseData);
+
+                // Show raw JSON
+                rawJsonContainer.style.display = 'block';
+                rawJsonContent.textContent = JSON.stringify(responseData, null, 2);
+                rawJsonStatus.textContent = 'Success';
+                rawJsonStatus.className = 'response-status status-success';
+            } else {
+                const errorText = await response.text();
+                responseContainer.style.display = 'block';
+                responseStatus.textContent = 'Error';
+                responseStatus.className = 'response-status status-error';
+                responseContent.textContent = errorText;
+                rawJsonContainer.style.display = 'block';
+                rawJsonContent.textContent = errorText;
+                rawJsonStatus.textContent = 'Error';
+                rawJsonStatus.className = 'response-status status-error';
+            }
+        } catch (error) {
+            responseContainer.style.display = 'block';
+            responseStatus.textContent = 'Error';
+            responseStatus.className = 'response-status status-error';
+            responseContent.textContent = error.toString();
+            rawJsonContainer.style.display = 'block';
+            rawJsonContent.textContent = error.toString();
+            rawJsonStatus.textContent = 'Error';
+            rawJsonStatus.className = 'response-status status-error';
+        } finally {
+            submitBtn.disabled = false;
+            loading.style.display = 'none';
+        }
+    }
+
+        /**
+         * Renders the API response as a corrected HTML table.
+         * @param {Array<Object>} data - The array of objects to display.
+         */
+        function displayAsTable(data) {
+            console.log("Data received for table display:", data);
+
+            if (!Array.isArray(data) || data.length === 0) {
+                responseContent.textContent = 'No data to display in table format.';
+                return;
+            }
+
+            // Calculate totals
+            let totalAUUs = 0;
+            let totalQuantity = 0;
+            let totalDuration = 0;
+            data.forEach(row => {
+                const quantity = row.quantity || 0;
+                const durationMinutes = row.duration_minutes || 0;
+                const auu = (quantity * durationMinutes) / 60;
+                totalAUUs += auu;
+                totalQuantity += quantity;
+                totalDuration += durationMinutes;
+            });
+
+            let tableHtml = '<table class="response-table"><thead>';
+            // Header row
+            tableHtml += '<tr>';
+            const headers = ['DATE/TIME (UTC)', 'QUANTITY', 'DURATION (min)', 'AUUs'];
+            headers.forEach(header => {
+                tableHtml += `<th>${header}</th>`;
+            });
+            tableHtml += '</tr>';
+
+            // Totals row (sticky)
+            tableHtml += '<tr class="totals-row" style="background: var(--rw-primary-dark); color: var(--rw-secondary); font-weight: 600;">';
+            tableHtml += '<td><strong>TOTALS</strong></td>';
+            tableHtml += `<td><strong>${totalQuantity}</strong></td>`;
+            tableHtml += `<td><strong>${totalDuration}</strong></td>`;
+            tableHtml += `<td><strong>${totalAUUs.toFixed(2)}</strong></td>`;
+            tableHtml += '</tr></thead><tbody>';
+
+            data.forEach(row => {
+                tableHtml += '<tr>';
+                const utcTime = row.timestamp_epoch_ms ? new Date(row.timestamp_epoch_ms).toUTCString() : 'N/A';
+                const quantity = row.quantity || 0;
+                const durationMinutes = row.duration_minutes || 0;
+                const auu = (quantity * durationMinutes) / 60;
+                
+                tableHtml += `<td>${utcTime}</td>`;
+                tableHtml += `<td>${quantity}</td>`;
+                tableHtml += `<td>${durationMinutes}</td>`;
+                tableHtml += `<td>${auu.toFixed(2)}</td>`;
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+            responseContent.innerHTML = tableHtml;
+        }
+
+        /**
+         * Handles the click event for the copy button.
+         */
+        function onCopyClick(elementId, buttonId) {
+            const textToCopy = document.getElementById(elementId).textContent;
+            const copyBtn = document.getElementById(buttonId);
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+            }).catch(err => {
+                console.error('Failed to copy text:', err);
+            });
+        }
+
+        /**
+         * Handles parameter validation.
+         */
+        function onParametersChange() {
+            const errorDiv = document.getElementById('parametersError');
+            if (!parametersInput.value.startsWith('/')) {
+                errorDiv.textContent = 'AUU parameters must start with a forward slash (/).';
+                errorDiv.style.display = 'block';
+            } else {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        // Toggle password visibility
+        const passwordInput = document.getElementById("userPassword");
+        const togglePassword = document.getElementById("togglePassword");
+
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener("click", () => {
+                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                passwordInput.setAttribute("type", type);
+                togglePassword.textContent = type === "password" ? "👁️" : "🙈";
+            });
+        }
+
+        // Initialize elements and event listeners after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize DOM element variables
+            form = document.getElementById('apiForm');
+            submitBtn = document.getElementById('submitBtn');
+            loading = document.getElementById('loading');
+            
+            // New raw JSON elements
+            rawJsonContainer = document.getElementById('rawJsonContainer');
+            rawJsonContent = document.getElementById('rawJsonContent');
+            rawJsonStatus = document.getElementById('rawJsonStatus');
+            copyRawJsonBtn = document.getElementById('copyRawJsonBtn');
+            toggleJsonBtn = document.getElementById('toggleJsonBtn');
+            
+            // Existing response table elements
+            responseContainer = document.getElementById('responseContainer');
+            responseContent = document.getElementById('responseContent');
+            responseStatus = document.getElementById('responseStatus');
+            copyBtn = document.getElementById('copyBtn');
+            
+            parametersError = document.getElementById('parametersError');
+            fqdnSelect = document.getElementById('fqdnSelect');
+            dbStatus = document.getElementById('dbStatus');
+            dbStatusText = document.getElementById('dbStatusText');
+            fqdnList = document.getElementById('fqdnList');
+            userMail = document.getElementById('userMail');
+            userPassword = document.getElementById('userPassword');
+            parametersInput = document.getElementById('parameters');
+            startDateInput = document.getElementById('startDate');
+            endDateInput = document.getElementById('endDate');
+            // commentsInput = document.getElementById('comments');
+
+            // Add event listeners
+            if (form) {
+                form.addEventListener('submit', onFormSubmit);
+            }
+            if (copyRawJsonBtn) {
+                copyRawJsonBtn.addEventListener('click', () => onCopyClick('rawJsonContent', 'copyRawJsonBtn'));
+            }
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => onCopyClick('responseContent', 'copyBtn'));
+            }
+            if (toggleJsonBtn) {
+                toggleJsonBtn.addEventListener('click', toggleJsonVisibility);
+            }
+
+            // Initial load of FQDNs
+            loadFqdns();
+        });
+    </script>
+</body>
+</html>
