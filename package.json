@@ -1,7 +1,7 @@
 {
   "name": "auu-query-tool-backend",
   "version": "1.0.0",
-  "description": "Backend API for AUU Query Tool with SQLite persistence",
+  "description": "Backend API for AUU Query Tool with PostgreSQL persistence",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "sqlite3": "^5.1.6",
+    "pg": "^8.11.0",
     "cors": "^2.8.5"
   },
   "devDependencies": {
@@ -17,7 +17,7 @@
   },
   "keywords": [
     "api",
-    "sqlite",
+    "postgresql",
     "express",
     "redwolf-security"
   ],

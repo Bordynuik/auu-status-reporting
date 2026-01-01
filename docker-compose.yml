@@ -1,12 +1,34 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: auu-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d  # Optional SQL scripts on first run
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
+    container_name: auu-app
     ports:
       - "3000:3000"
     env_file:
       - .env
-    environment:
-      DATA_DIR: /usr/src/app/data
-    volumes:
-      - ./data:/usr/src/app/data
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+    volumes:
+      - ./app_data:/usr/src/app/data  # optional app logs, config, local files
+
+volumes:
+  postgres_data:
