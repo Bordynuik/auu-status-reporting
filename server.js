@@ -9,12 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Allow overriding where runtime data (DB, logs) are stored.
-const DATA_DIR = process.env.DATA_DIR || __dirname;
+const DATA_DIR = process.env.DATA_DIR || '/usr/src/app/data';
+
 if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 const LOG_FILE = path.join(DATA_DIR, 'server.log');
-const DB_FILE = path.join(DATA_DIR, 'AUU_Query.db');
+const DB_FILE = path.join(DATA_DIR, 'auu.db');
 
 // Simple logger function
 function logToFile(message) {
