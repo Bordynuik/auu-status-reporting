@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   app:
     build: .
@@ -6,4 +5,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      DATA_DIR: /usr/src/app/data
+    volumes:
+      - ./data:/usr/src/app/data
     restart: unless-stopped
