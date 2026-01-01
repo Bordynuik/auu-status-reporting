@@ -62,3 +62,4 @@ test-results/
 # WSL / Linux noise
 # ======================
 *~
+data/*.db
